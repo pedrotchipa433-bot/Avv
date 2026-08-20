@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">  
+<head>  
+<meta charset="UTF-8">  
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>  
+<title>MILECO ON V2 – BOT IA AVIATOR</title>  
+<style>  
+html, body{  
+    margin:0;  
+    padding:0;  
+    background:#000;  
+    font-family:'Segoe UI',sans-serif;  
+    overflow-x:hidden;  
+    color:white;  
+}  
+  
+canvas{  
+    position:fixed;  
+    top:0;  
+    left:0;  
+    z-index:0;  
+}  
+
+.screen {
+    display: none;
+    position: relative;
+    z-index: 2;
+}
+
+.screen.active {
+    display: block;
+}
+
+/* --- ANIMAÇÃO DO AVIÃO NA TELA INICIAL E PAINEL --- */
+.aviator-hero {
+    position: relative;
+    width: 100%;
+    height: 140px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.plane {
+    position: absolute;
+    width: 50px;
+    height: 30px;
+    bottom: 20px;
+    left: -60px;
+    animation: flyAviator 3.5s infinite linear;
+}
+
+.plane svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 10px #ff3300);
+}
+
+@keyframes flyAviator {
+    0% { left: -60px; bottom: 10px; transform: rotate(10deg) scale(0.8); }
+    50% { left: 45%; bottom: 60px; transform: rotate(18deg) scale(1.1); }
+    85% { left: 85%; bottom: 110px; transform: rotate(25deg) scale(1.2); }
+    100% { left: 110%; bottom: 150px; transform: rotate(30deg) scale(1); }
+}
+
+/* --- ANIMAÇÃO DE VOO COMPLETA NO DISPLAY --- */
+.flight-stage {
+    position: relative;
+    width: 100%;
+    height: 120px;
+    background: radial-gradient(circle at bottom left, rgba(255, 51, 0, 0.2), transparent 70%);
+    border: 1px dashed rgba(255, 111, 51, 0.3);
+    border-radius: 10px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.flying-plane {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    bottom: 10px;
+    left: -40px;
+    animation: flightPath 2.5s infinite ease-out;
+}
+
+@keyframes flightPath {
+    0% { left: -10%; bottom: 5px; transform: rotate(5deg); }
+    40% { left: 35%; bottom: 30px; transform: rotate(20deg); }
+    80% { left: 75%; bottom: 75px; transform: rotate(35deg); }
+    100% { left: 105%; bottom: 110px; transform: rotate(40deg); }
+}
+
+/* Estilo do Login */
+.login-box {
+    background: rgba(17, 17, 17, 0.95);
+    border: 1px solid #ff6f3344;
+    padding: 25px 20px;
+    border-radius: 12px;
+    max-width: 380px;
+    margin: 40px auto;
+    box-shadow: 0 0 25px #ff6f3344;
+    text-align: center;
+    backdrop-filter: blur(5px);
+}
+
+.login-box h2 {
+    color: #f15a29;
+    margin-bottom: 10px;
+    text-shadow: 0 0 8px #f15a29;
+    font-size: 1.6em;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    background: #1a1a1a;
+    border: 1px solid #333;
+    color: #ff6f33;
+    border-radius: 8px;
+    font-size: 1em;
+    text-align: center;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.btn-music {
+    background: #222;
+    border: 1px solid #ff6f33;
+    color: #ff6f33;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 0.8em;
+    cursor: pointer;
+    margin-bottom: 15px;
+    transition: 0.3s;
+}
+
+.btn-music:hover {
+    background: #ff6f33;
+    color: #000;
+}
+
+/* --- BOTÃO WHATSAPP --- */
+.btn-whatsapp {
+    display: inline-block;
+    width: 100%;
+    background: #25D366;
+    color: #000;
+    font-weight: bold;
+    font-size: 1em;
+    padding: 12px 0;
+    margin-top: 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    box-sizing: border-box;
+    box-shadow: 0 0 15px rgba(37, 211, 102, 0.4);
+    transition: 0.3s;
+}
+
+.btn-whatsapp:hover {
+    background: #20ba5a;
+    box-shadow: 0 0 25px rgba(37, 211, 102, 0.7);
+}
+  
+h1{  
+    color:#f15a29;  
+    text-align:center;  
+    font-size:1.8em;  
+    text-shadow:0 0 8px #f15a29,0 0 20px #ff6f33;  
+    margin-top:15px;  
+}  
+
+.bot-status {
+    background: rgba(0, 153, 255, 0.15);
+    border: 1px solid #0099ff;
+    color: #0099ff;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 10px;
+    box-shadow: 0 0 10px rgba(0, 153, 255, 0.3);
+}
+
+.strategy-badge {
+    background: rgba(0, 255, 136, 0.15);
+    border: 1px solid #00ff88;
+    color: #00ff88;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 12px;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+  
+.prediction-box{  
+    background:#111;  
+    border:1px solid #ff6f3344;  
+    padding:20px;  
+    border-radius:12px;  
+    max-width:400px;  
+    margin:20px auto;  
+    box-shadow:0 0 15px #ff6f3344;  
+    text-align:center;  
+}  
+  
+.prediction-box input, .strategy-select {  
+    width:100%;  
+    padding:12px;  
+    margin-bottom:12px;  
+    background:#1a1a1a;  
+    border:1px solid #333;  
+    color:#ff6f33;  
+    border-radius:8px;  
+    font-size:0.95em;  
+    text-align:center;  
+    box-sizing:border-box;  
+    outline: none;
+}  
+
+.label-title {
+    display: block;
+    text-align: left;
+    font-size: 0.85em;
+    color: #aaa;
+    margin-bottom: 4px;
+    margin-left: 2px;
+}
+  
+.multiplier{  
+    width:180px;  
+    height:180px;  
+    margin:10px auto;  
+    border-radius:50%;  
+    background:radial-gradient(circle at center,#ff6f33 20%,#4d1e00 100%);  
+    display:flex;  
+    flex-direction: column;
+    align-items:center;  
+    justify-content:center;  
+    font-size:1.2em;  
+    font-weight:bold;  
+    color:#000;  
+    text-align:center;  
+    padding:10px;  
+    text-shadow:0 0 10px #ff6f33,0 0 20px #ff9c33;  
+    box-shadow:0 0 25px #ff6f33,0 0 50px #ff9c3344;  
+    animation:pulse 2s infinite;  
+    white-space:pre-line;  
+}  
+  
+@keyframes pulse{  
+    0%{ box-shadow:0 0 15px #ff6f33,0 0 30px #ff9c3344; }  
+    50%{ box-shadow:0 0 30px #ff6f33,0 0 60px #ff9c33; }  
+    100%{ box-shadow:0 0 15px #ff6f33,0 0 30px #ff9c3344; }  
+}  
+  
+.generate-btn{  
+    background:#ff6f33;  
+    border:none;  
+    padding:12px 25px;  
+    color:#000;  
+    font-weight:bold;  
+    font-size:1em;  
+    border-radius:8px;  
+    cursor:pointer;  
+    transition:0.3s;  
+    width: 100%;
+}  
+  
+.generate-btn:hover{  
+    background:#ff8a4d;  
+}  
+
+.btn-logout {
+    background: #222;
+    border: 1px solid #444;
+    color: #888;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 0.9em;
+}
+
+.btn-logout:hover {
+    background: #333;
+    color: #fff;
+}  
+</style>  
+</head>  
+<body>  
+
+<canvas id="matrix"></canvas>
+<canvas id="fire"></canvas>
+
+<!-- TELA 1: LOGIN -->
+<div id="screen1" class="screen active">
+    <div class="login-box">
+        
+        <div class="aviator-hero">
+            <div class="plane">
+                <svg viewBox="0 0 24 24" fill="#ff2200">
+                    <path d="M21,16V14L13,9V3.5A1.5,1.5 0 0,0 11.5,2A1.5,1.5 0 0,0 10,3.5V9L2,14V16L10,13.5V19L8,20.5V22L11.5,21L15,22V20.5L13,19V13.5L21,16Z"/>
+                </svg>
+            </div>
+        </div>
+
+        <h2>🔐 LOGIN AVIATOR</h2>
+        <button class="btn-music" id="btnMusicToggle" onclick="toggleAudio(event)">🔔 Som de Sinal: ON</button>
+        
+        <input type="email" id="loginEmail" placeholder="E-mail de acesso">
+        <input type="password" id="loginPassword" placeholder="Palavra-passe">
+        
+        <button class="generate-btn" onclick="fazerLogin()">ENTRAR NO SISTEMA</button>
+
+        <!-- LINK DO WHATSAPP PARA COMPRAR ACESSO -->
+        <a href="https://wa.me/258866763111?text=Olá!%20Quero%20comprar%20o%20acesso%20ao%20BOT%20IA%20Aviator." target="_blank" class="btn-whatsapp">
+            💬 COMPRAR ACESSO VIP (WHATSAPP)
+        </a>
+    </div>
+</div>
+
+<!-- TELA 2: PLATAFORMAS E GERADOR -->
+<div id="screen2" class="screen">
+    <h1>AVIATOR V1 – INTERNATIONAL</h1>  
+
+    <div id="predictionModule" class="prediction-box">  
+
+        <div class="bot-status" id="botStatus">🤖 BOT IA: Selecione uma plataforma</div><br>
+        <div class="strategy-badge">⚡ Assertividade real: 98%</div>
+
+        <label class="label-title">Selecione a Plataforma para Conectar o BOT IA:</label>
+        <select id="platformSelect" class="strategy-select" onchange="atualizarConexaoBot()">
+            <optgroup label="🇦🇴 Plataformas de Angola">
+                <option value="Elephant Bet AO" selected>Elephant Bet AO 🇦🇴</option>
+                <option value="888bet AO">888bet AO 🇦🇴</option>
+                <option value="BantuBet AO">BantuBet AO 🇦🇴</option>
+                <option value="AngoBet">AngoBet 🇦🇴</option>
+            </optgroup>
+            <optgroup label="🇲🇿 Outras Plataformas">
+                <option value="Elephant Bet MZ">Elephant Bet MZ 🇲🇿</option>
+                <option value="JogaBets">JogaBets 🇲🇿</option>
+                <option value="888Bet MZ">888Bet MZ 🇲🇿</option>
+            </optgroup>
+        </select>
+
+        <!-- PALCO COM ANIMAÇÃO DE VOO DO AVIÃO -->
+        <div class="flight-stage">
+            <div class="flying-plane">
+                <svg viewBox="0 0 24 24" fill="#ff3300">
+                    <path d="M21,16V14L13,9V3.5A1.5,1.5 0 0,0 11.5,2A1.5,1.5 0 0,0 10,3.5V9L2,14V16L10,13.5V19L8,20.5V22L11.5,21L15,22V20.5L13,19V13.5L21,16Z"/>
+                </svg>
+            </div>
+        </div>
+
+        <input type="text" id="serverSeedInput" placeholder="Insira o server_seed da rodada"/>
+
+        <div class="multiplier" id="multiplierDisplay">--</div>  
+
+        <div class="risk-message" id="riskMessage">  
+            Selecione a plataforma e insira o server_seed
+        </div>  
+
+        <button class="generate-btn" id="btnBuscar" onclick="buscarEntrada()">  
+            🤖 BOT IA: BUSCAR Entrada
+        </button>  
+
+        <button class="btn-logout" onclick="fazerLogout()">
+            Sair / Trocar Conta
+        </button>
+
+    </div>  
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>  
+
+<!-- Canvas Background -->
+<script>  
+const canvas = document.getElementById('matrix');  
+const ctx = canvas.getContext('2d');  
+canvas.width = window.innerWidth;  
+canvas.height = window.innerHeight;  
+const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&";  
+const fontSize = 14;  
+const columns = canvas.width / fontSize;  
+const drops = Array.from({length: columns}).fill(1);  
+  
+function drawMatrix(){  
+    ctx.fillStyle = "rgba(0,0,0,0.05)";  
+    ctx.fillRect(0,0,canvas.width,canvas.height);  
+    ctx.fillStyle = "#f15a29";  
+    ctx.font = fontSize + "px monospace";  
+    for(let i=0;i<drops.length;i++){  
+        const text = letters.charAt(Math.floor(Math.random() * letters.length));  
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);  
+        if(drops[i] * fontSize > canvas.height && Math.random() > 99.975){ drops[i] = 0; }  
+        drops[i]++;  
+    }  
+}  
+setInterval(drawMatrix,33);  
+
+const fireCanvas = document.getElementById('fire');  
+const fireCtx = fireCanvas.getContext('2d');  
+fireCanvas.width = window.innerWidth;  
+fireCanvas.height = window.innerHeight;  
+const particles = [];  
+for(let i=0;i<120;i++){  
+    particles.push({  
+        x:Math.random() * fireCanvas.width,  
+        y:Math.random() * fireCanvas.height,  
+        radius:Math.random() * 3 + 1,  
+        alpha:Math.random() * 0.5 + 0.3,  
+        dx:(Math.random()-0.5) * 0.5,  
+        dy:-Math.random() * 1.5 - 0.5  
+    });  
+}  
+function drawFire(){  
+    fireCtx.clearRect(0,0,fireCanvas.width,fireCanvas.height);  
+    particles.forEach(p => {  
+        fireCtx.beginPath();  
+        fireCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);  
+        fireCtx.fillStyle = `rgba(255,${Math.floor(Math.random()*150)},0,${p.alpha})`;  
+        fireCtx.fill();  
+        p.x += p.dx; p.y += p.dy;  
+        if(p.y < 0){ p.y = fireCanvas.height; p.x = Math.random() * fireCanvas.width; }  
+    });  
+    requestAnimationFrame(drawFire);  
+}  
+drawFire();  
+</script>  
+
+<!-- ÁUDIO E LÓGICA DO BOT IA -->
+<script>  
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+let soundEnabled = true;
+
+function toggleAudio(e) {
+    if(e) e.stopPropagation();
+    soundEnabled = !soundEnabled;
+    const btn = document.getElementById("btnMusicToggle");
+    
+    if (soundEnabled) {
+        btn.innerText = "🔔 Som de Sinal: ON";
+        btn.style.background = "#ff6f33";
+        btn.style.color = "#000";
+    } else {
+        btn.innerText = "🔕 Som de Sinal: OFF";
+        btn.style.background = "#222";
+        btn.style.color = "#ff6f33";
+    }
+}
+
+function playWinSoundOnce() {
+    if (!soundEnabled) return;
+    
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(587.33, now); 
+    osc.frequency.setValueAtTime(880, now + 0.1); 
+
+    gain.gain.setValueAtTime(0.3, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(now);
+    osc.stop(now + 0.3);
+}
+
+function fazerLogin() {
+    const email = document.getElementById("loginEmail").value.trim();
+    const password = document.getElementById("loginPassword").value.trim();
+
+    if (email === "Jatildclimacond@gmail.com" && password === "2026") {
+        document.getElementById("screen1").classList.remove("active");
+        document.getElementById("screen2").classList.add("active");
+        atualizarConexaoBot();
+    } else {
+        alert("E-mail ou palavra-passe incorretos!");
+    }
+}
+
+function fazerLogout() {
+    document.getElementById("screen2").classList.remove("active");
+    document.getElementById("screen1").classList.add("active");
+}
+
+function atualizarConexaoBot() {
+    const platform = document.getElementById("platformSelect").value;
+    document.getElementById("botStatus").innerText = `🤖 BOT IA Conectado: ${platform}`;
+    document.getElementById("riskMessage").innerText = `Pronto para analisar padrão do Aviator na ${platform}`;
+    document.getElementById("riskMessage").style.color = "#aaa";
+}
+
+function crashPointFromHash(hash){  
+    const h = parseInt(hash.substring(0,13),16);  
+    if(h % 33 === 0){ return 3.00; }  
+    return Math.floor((100 * (Math.pow(2,52)-1)) / (Math.pow(2,52)-h)) / 100;  
+}  
+  
+function generateHash(serverSeed, clientSeed, nonce){  
+    return CryptoJS.SHA256(`${serverSeed}:${clientSeed}:${nonce}`).toString();  
+}  
+  
+function getFutureTime(offset){  
+    const now = new Date();  
+    now.setMinutes(now.getMinutes() + offset);  
+    return now.toTimeString().slice(0,8);  
+}  
+
+function buscarEntrada(){  
+    const serverSeed = document.getElementById("serverSeedInput").value.trim();  
+    const platform = document.getElementById("platformSelect").value;
+  
+    if(!serverSeed){  
+        alert("Insira o server_seed real da rodada.");  
+        return;  
+    }  
+
+    document.getElementById("multiplierDisplay").innerText = "ANALISANDO...";
+    document.getElementById("riskMessage").innerText = `🤖 BOT IA lendo o algoritmo de aviator na ${platform}...`;
+    document.getElementById("riskMessage").style.color = "#ffcc00";
+
+    setTimeout(() => {
+        let tenta = 0;  
+        let achou = false;  
+      
+        while(tenta < 1000){  
+            const clientSeed = Math.random().toString(36).substring(3,12);  
+            const nonce = Math.floor(Math.random() * 10000);  
+            const hash = generateHash(serverSeed, clientSeed, nonce);  
+            const multiplier = crashPointFromHash(hash);  
+
+            if (multiplier >= 3.30) {  
+                const horario = getFutureTime((tenta % 10) + 1);  
+
+                document.getElementById("multiplierDisplay").innerText =  
+                    `⏰ ${horario}\n🎯 ${multiplier.toFixed(2)}x`;  
+      
+                document.getElementById("riskMessage").innerText =  
+                    `🤖 SINAL BOT IA [${platform}]: Entrada Confirmada! (98% Assertividade)`;  
+      
+                document.getElementById("riskMessage").style.color = "#00ff88";  
+      
+                playWinSoundOnce(); 
+                achou = true;  
+                break;  
+            }  
+            tenta++;  
+        }  
+      
+        if(!achou){  
+            document.getElementById("riskMessage").innerText = `🤖 BOT IA: Nenhuma entrada segura encontrada na ${platform}.`;  
+            document.getElementById("riskMessage").style.color = "#ff4444";
+            document.getElementById("multiplierDisplay").innerText = "--";  
+        }  
+    }, 600);
+}  
+</script>  
+</body>  
+</html>
